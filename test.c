@@ -44,15 +44,35 @@ pinMode(14,INPUT);
 
 //variables
 
-bool floor1status,prevbutton1 = 1;
+//previous states of each button:  the switches that we're monitoring are momentary,
+//                                 we need to know the previous state so that when we 
+//                                see that the buttons is pressed, we dont continually 
+//			 	  switch states while it is held down.  the floorstatus changes
+//			          states only when the prevButton variable for a given floor and 
+//				  the DigitalRead monitoring the button for the same floor are different
+
+bool floor1status,prevbutton1 = 1; 
 bool floor2status,prevbutton2 = 1;
 bool floor3status,prevbutton3 = 1;
 bool floor4status,prevbutton4 = 1;
 bool floor5status,prevbutton5 = 1;
 bool floor6status,prevbutton6 = 1;
 bool masterstatus,prevmaster = 0;
+
+//floor error flags indicate that the pin monitoring the floor and the pin controlling the floor are in conflict.
+// This occurs in two scenarios: 1, The control signal has just changed and the relay controling the power to each floor 
+// has not switched yet.  (there is a delay time for each relay)
+// the second scenario is that there is a fault; The floor should be on,  but for some reason it is not receiving power. 
+
 bool floor1errorflag = 0;
+
+// the floordelaycount variables allow for a delay count for each floor and for the master control,  this is because the 
+// we need to account for the delay of the relays.  
+// example:  if Floor1status = 1 and DigitalRead(0) = 0  the delay count will begin counting.  once the counter reaches
+// a set value that is long enough to account for any delay by the relay, it will set the value of floor1errorflag to 1.
 int  floor1delaycount = 0;
+
+
 
 while (1) {
 
@@ -226,7 +246,8 @@ prevmaster = 0;
 
 
 		
-//setfloorvalues
+//setfloorvalues given updated floor status values 
+// if the master status is on,  then each individual floor controls its own status
 if (!masterstatus){
 digitalWrite(7,(!floor1status));
 digitalWrite(8,(!floor2status));
@@ -235,6 +256,7 @@ digitalWrite(10,(!floor4status));
 digitalWrite(11,(!floor5status));
 digitalWrite(12,(!floor6status));
 }
+// if the master status is off,  all floors are off. 
 else{
 digitalWrite(7,HIGH);
 digitalWrite(8,HIGH);
