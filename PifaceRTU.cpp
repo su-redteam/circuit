@@ -5,7 +5,7 @@
 #include <opendnp3/link/ChannelRetry.h>
 #include <opendnp3/LogLevels.h>
 
-#include "PifaceIOHandler.h"
+#include "MicroGridIOHandler.h"
 
 #include <thread>
 #include <chrono>
@@ -17,7 +17,7 @@ using namespace asiodnp3;
 
 int main(int argc, char* argv[])
 {
-	PifaceIOHandler ioHandler; // handles control request, input polling, and measurement tracking/updates
+	MicroGridIOHandler ioHandler; // handles control request, input polling, and measurement tracking/updates
 
 	const uint32_t FILTERS = levels::NORMAL;
 	DNP3Manager dnp3(1);
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	outstation->Enable();
 
 	do {
-		ioHandler.ReadMeasurements(outstation);
+		ioHandler.read_measurements(outstation);
 		this_thread::sleep_for( chrono::milliseconds(100) );
 	}
 	while(true);

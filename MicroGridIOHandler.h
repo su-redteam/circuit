@@ -12,27 +12,39 @@ private:
 	void Start() override{}
 	void End() override{}
 	
-	void DoOperate(const opendnp3::ControlRelayOutputBlock& command, uint8_t index);
+	void do_operate(const opendnp3::ControlRelayOutputBlock& command, uint8_t index);
 	
-	void writeSwitchValue(uint_8 index, bool value);
+	// may not be necessary with interrupt fxns
+	void write_switch_value(uint_8 index, bool value);
 	
-	opendnp3::CommandStatus ValidateCROB(const opendnp3::ControlRelayOutputBlock& command, uint16_t index);
+	void button_interrupt(uint8_t index);
+	
+	void relay_interrupt(uint8_t index);
+	
+	void thread_starter(void);
+	
+	opendnp3::CommandStatus validateCROB(const opendnp3::ControlRelayOutputBlock& command, uint16_t index);
 	
 	
 	struct status // contains the status of each switch and relay
 	{
-		bool fault[7];
-		bool floor[7];
-		bool relay[7];
-	}
+		// if (fault[index] && floor[index]), we have an uncommanded trip fault!!
+		// relay[index] should be false and ETC should send an alert
+		
+		bool fault[7]; // is the uncommanded trip switch thrown?
+		bool floor[7]; // is the circuit supposed to be active?
+		bool relay[7]; // what is the actual status of the relay?
+	} microgrid;
+	
 	public:
 	
 	MicroGridIOHandler();
-	~MicroGridIOHandler();
+	~MicroGridIOHandler(){};
 	
-	void ReadMeasurements(asiodnp3::IOutstation* pOutstation); // reads status of each switch and relay, updates ETC
-	void buttonInterrupt(int num); //ISR for button presses
-
+	void read_measurements(asiodnp3::IOutstation* pOutstation); // reads status of each switch and relay, updates ETC
+	
+	// not quite sure what these fxns do. I think we may need to adapt for analog reading of battery level
+	
 	opendnp3::CommandStatus Select(const opendnp3::ControlRelayOutputBlock& command, uint16_t index);
 	opendnp3::CommandStatus Operate(const opendnp3::ControlRelayOutputBlock& command, uint16_t index);
 	
