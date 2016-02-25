@@ -28,10 +28,7 @@ private:
 	
 	struct status // contains the status of each switch and relay
 	{
-		// if (fault[index] && floor[index]), we have an uncommanded trip fault!!
-		// relay[index] should be false and ETC should send an alert
-		
-		bool fault[7]; // is the uncommanded trip switch thrown?
+		bool fault[7]; // do we have a fault in the circuit?
 		bool floor[7]; // is the circuit supposed to be active?
 		bool relay[7]; // what is the actual status of the relay?
 	} microgrid;

@@ -86,6 +86,7 @@ void microgridIOHandler::microgrid_init(void)
 	pinMode(STATUS5, INPUT);
 	pinMode(STATUS6, INPUT);
 }
+
 void microgridIOHandler::doOperate(const ControlRelayOutputBlock& command, uint_8 index)
 {
 	uint_8 value = (command.functionCode == ControlCode::LATCH_ON) ? 1 : 0;
@@ -176,4 +177,3 @@ microgridIOHandler::microgridIOHandler()
 	microgrid_init();
 	thread_starter();
 }
-
